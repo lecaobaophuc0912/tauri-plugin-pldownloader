@@ -1,0 +1,17 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "enables the default permissions",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:default",
+    "pldownloader:default",
+    "pldownloader:allow-download-private",
+    "pldownloader:allow-download-public",
+    "pldownloader:allow-copy-file-path",
+    "share:default",
+    "share:allow-share-file"
+  ]
+}
