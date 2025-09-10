@@ -4,13 +4,17 @@ import { ping, downloadPrivate, downloadPublic, copyFilePath } from '../../../..
 import { shareFile } from 'tauri-plugin-share';
 
 function Download() {
-  const [url, setUrl] = useState("https://s3-api-file.mojo.vn/app/98bf4891-4593-4a59-bbb9-cd035a3d25be-yoeq24.png")
+  const [url, setUrl] = useState("")
   const [downloadMsg, setDownloadMsg] = useState("")
+
+  const getNameFromUrl = (url: string) => {
+    return url.split("/").pop()
+  }
 
 
   const handleDownloadPublic = async () => {
     try {
-      const res = await downloadPublic({ url, fileName: "98bf4891-4593-4a59-bbb9-cd035a3d25be-yoeq24.png", mimeType: "image/png" })
+      const res = await downloadPublic({ url, fileName: getNameFromUrl(url) })
       setDownloadMsg(res.path || res.uri || "")
     } catch (error) {
       console.error(error)
@@ -19,7 +23,7 @@ function Download() {
 
   const handleSharePrivate = async () => {
     try {
-      const res = await downloadPrivate({ url, fileName: "98bf4891-4593-4a59-bbb9-cd035a3d25be-yoeq24.png" })
+      const res = await downloadPrivate({ url, fileName: getNameFromUrl(url) })
       if (res.path) {
         await shareFile(res.path as string, "image/png")
       }
