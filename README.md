@@ -56,15 +56,8 @@ Or call commands directly using `@tauri-apps/api` `invoke` (see API section).
 
 ### Rust Setup
 
-In your app `src-tauri/build.rs`:
 
-```rust
-fn main() {
-    tauri_plugin_pldownloader::build();
-}
-```
-
-In your app `src-tauri/src/main.rs`:
+In your app `src-tauri/src/lib.rs`:
 
 ```rust
 fn main() {
