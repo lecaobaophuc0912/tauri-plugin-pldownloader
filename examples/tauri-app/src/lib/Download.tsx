@@ -4,7 +4,7 @@ import { ping, downloadPrivate, downloadPublic, copyFilePath } from '../../../..
 import { shareFile } from 'tauri-plugin-share';
 
 function Download() {
-  const [url, setUrl] = useState("")
+  const [url, setUrl] = useState("https://www.learningcontainer.com/wp-content/uploads/2020/02/Kalimba-online-audio-converter.com_-1.wav")
   const [downloadMsg, setDownloadMsg] = useState("")
 
   const getNameFromUrl = (url: string) => {

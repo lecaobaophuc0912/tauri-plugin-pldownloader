@@ -203,7 +203,7 @@ class DownloaderPlugin: Plugin {
     if #available(iOS 14.0, *) {
       let ext = (fileName as NSString).pathExtension
       if let type = UTType(filenameExtension: ext) {
-        if type.conforms(to: .image) || type.conforms(to: .movie) || type.conforms(to: .audiovisualContent) {
+      if type.conforms(to: .image) || type.conforms(to: .movie) {
           return true
         }
       }
