@@ -40,8 +40,8 @@ pub fn init<R: Runtime>() -> TauriPlugin<R> {
       commands::ping,
       commands::download_private,
       commands::download_public,
-      commands::save_file_private_from_path,
-      commands::save_file_public_from_path,
+      commands::save_file_private_from_buffer,
+      commands::save_file_public_from_buffer,
       fs::copy_file_path
     ])
     .setup(|app, api| {

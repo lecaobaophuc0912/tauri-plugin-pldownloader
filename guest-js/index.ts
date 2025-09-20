@@ -37,21 +37,21 @@ export async function copyFilePath(src: string, dest: string): Promise<string> {
   return await invoke<string>('plugin:pldownloader|copy_file_path', { src, dest })
 }
 
-export interface SaveFilePrivateFromPathRequest {
+export interface SaveFilePrivateFromBufferRequest {
   data: ArrayBuffer;
   fileName: string;
 }
 
-export interface SaveFilePublicFromPathRequest {
+export interface SaveFilePublicFromBufferRequest {
   data: ArrayBuffer;
   fileName: string;
   mimeType?: string;
 }
 
-export async function saveFilePrivateFromPath(payload: SaveFilePrivateFromPathRequest): Promise<DownloadResponse> {
-  return await invoke<DownloadResponse>('plugin:pldownloader|save_file_private_from_path', { payload })
+export async function saveFilePrivateFromBuffer(payload: SaveFilePrivateFromBufferRequest): Promise<DownloadResponse> {
+  return await invoke<DownloadResponse>('plugin:pldownloader|save_file_private_from_buffer', { payload })
 }
 
-export async function saveFilePublicFromPath(payload: SaveFilePublicFromPathRequest): Promise<DownloadResponse> {
-  return await invoke<DownloadResponse>('plugin:pldownloader|save_file_public_from_path', { payload })
+export async function saveFilePublicFromBuffer(payload: SaveFilePublicFromBufferRequest): Promise<DownloadResponse> {
+  return await invoke<DownloadResponse>('plugin:pldownloader|save_file_public_from_buffer', { payload })
 }

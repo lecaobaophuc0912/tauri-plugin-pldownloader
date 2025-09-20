@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { downloadPrivate, downloadPublic, saveFilePrivateFromPath, saveFilePublicFromPath } from '../../../../dist-js';
+import { downloadPrivate, downloadPublic, saveFilePrivateFromBuffer, saveFilePublicFromBuffer } from '../../../../dist-js';
 import { shareFile } from 'tauri-plugin-share';
 
 function Download() {
@@ -65,13 +65,13 @@ function Download() {
     }
   }
 
-  const handleSavePublicFromPath = async () => {
+  const handleSavePublicFromBuffer = async () => {
     try {
       const name = getNameFromUrl(url) || 'download'
       const resFetch = await fetch(url)
       const blob = await resFetch.blob()
       const arrayBuffer = await blob.arrayBuffer()
-      const res = await saveFilePublicFromPath({ data: arrayBuffer, fileName: name, mimeType: blob.type || undefined })
+      const res = await saveFilePublicFromBuffer({ data: arrayBuffer, fileName: name, mimeType: blob.type || undefined })
       console.log('res', res)
       setDownloadMsg(res.path || res.uri || '')
     } catch (error) {
@@ -79,13 +79,13 @@ function Download() {
     }
   }
 
-  const handleSavePrivateFromPath = async () => {
+  const handleSavePrivateFromBuffer = async () => {
     try {
       const name = getNameFromUrl(url) || 'download';
       const resFetch = await fetch(url)
       const blob = await resFetch.blob()
       const arrayBuffer = await blob.arrayBuffer()
-      const res = await saveFilePrivateFromPath({ data: arrayBuffer, fileName: name });
+      const res = await saveFilePrivateFromBuffer({ data: arrayBuffer, fileName: name });
       console.log('res', res);
       setDownloadMsg(res.path || res.uri || '');
       if (res.path) {
@@ -111,8 +111,8 @@ function Download() {
       <div style={{ display: 'flex', gap: 8, marginTop: '10px' }}>
         <button onClick={handleDownloadPublic}>Download (Public)</button>
         <button onClick={handleSharePrivate}>Share (Private)</button>
-        <button onClick={handleSavePublicFromPath}>Save Public From ArrayBuffer</button>
-        <button onClick={handleSavePrivateFromPath}>Save Private From ArrayBuffer</button>
+        <button onClick={handleSavePublicFromBuffer}>Save Public From Buffer</button>
+        <button onClick={handleSavePrivateFromBuffer}>Save Private From Buffer</button>
       </div>
       <p>{downloadMsg}</p>
     </div>

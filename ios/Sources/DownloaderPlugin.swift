@@ -27,7 +27,7 @@ class DownloaderPlugin: Plugin {
     let mimeType: String?
   }
 
-  class SaveFilePrivateFromPathArgs: Decodable {
+  class SaveFilePrivateFromBufferArgs: Decodable {
     let data: Data
     let fileName: String
     
@@ -49,7 +49,7 @@ class DownloaderPlugin: Plugin {
     }
   }
 
-  class SaveFilePublicFromPathArgs: Decodable {
+  class SaveFilePublicFromBufferArgs: Decodable {
     let data: Data
     let fileName: String
     let mimeType: String?
@@ -168,8 +168,8 @@ class DownloaderPlugin: Plugin {
     }.resume()
   }
 
-  @objc public func saveFilePrivateFromPath(_ invoke: Invoke) throws {
-    let args = try invoke.parseArgs(SaveFilePrivateFromPathArgs.self)
+  @objc public func saveFilePrivateFromBuffer(_ invoke: Invoke) throws {
+    let args = try invoke.parseArgs(SaveFilePrivateFromBufferArgs.self)
 
     let data = args.data
     let fileName = args.fileName
@@ -188,8 +188,8 @@ class DownloaderPlugin: Plugin {
     }
   }
 
-  @objc public func saveFilePublicFromPath(_ invoke: Invoke) throws {
-    let args = try invoke.parseArgs(SaveFilePublicFromPathArgs.self)
+  @objc public func saveFilePublicFromBuffer(_ invoke: Invoke) throws {
+    let args = try invoke.parseArgs(SaveFilePublicFromBufferArgs.self)
 
     let data = args.data
     let fileName = args.fileName

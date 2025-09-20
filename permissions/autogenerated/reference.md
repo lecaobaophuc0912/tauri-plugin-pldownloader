@@ -7,8 +7,8 @@ Default permissions for the plugin
 - `allow-ping`
 - `allow-download-private`
 - `allow-download-public`
-- `allow-save-file-private-from-path`
-- `allow-save-file-public-from-path`
+- `allow-save-file-private-from-buffer`
+- `allow-save-file-public-from-buffer`
 
 ## Permission Table
 
@@ -171,6 +171,58 @@ Enables the ping command without any pre-configured scope.
 <td>
 
 Denies the ping command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`pldownloader:allow-save-file-private-from-buffer`
+
+</td>
+<td>
+
+Enables the save_file_private_from_buffer command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`pldownloader:deny-save-file-private-from-buffer`
+
+</td>
+<td>
+
+Denies the save_file_private_from_buffer command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`pldownloader:allow-save-file-public-from-buffer`
+
+</td>
+<td>
+
+Enables the save_file_public_from_buffer command without any pre-configured scope.
+
+</td>
+</tr>
+
+<tr>
+<td>
+
+`pldownloader:deny-save-file-public-from-buffer`
+
+</td>
+<td>
+
+Denies the save_file_public_from_buffer command without any pre-configured scope.
 
 </td>
 </tr>

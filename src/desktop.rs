@@ -28,7 +28,7 @@ impl<R: Runtime> Pldownloader<R> {
     Err(std::io::Error::new(std::io::ErrorKind::Unsupported, "download_public not implemented on desktop").into())
   }
 
-  pub fn save_file_private_from_path(&self, payload: SaveFilePrivateFromPathRequest) -> crate::Result<DownloadResponse> {
+  pub fn save_file_private_from_buffer(&self, payload: SaveFilePrivateFromBufferRequest) -> crate::Result<DownloadResponse> {
     use std::path::Path;
     use tauri::api::path::app_data_dir;
     
@@ -53,7 +53,7 @@ impl<R: Runtime> Pldownloader<R> {
     })
   }
 
-  pub fn save_file_public_from_path(&self, payload: SaveFilePublicFromPathRequest) -> crate::Result<DownloadResponse> {
+  pub fn save_file_public_from_buffer(&self, payload: SaveFilePublicFromBufferRequest) -> crate::Result<DownloadResponse> {
     use std::path::Path;
     use tauri::api::path::download_dir;
     

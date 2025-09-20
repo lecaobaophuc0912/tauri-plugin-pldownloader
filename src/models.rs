@@ -37,7 +37,7 @@ pub struct DownloadResponse {
 
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct SaveFilePrivateFromPathRequest {
+pub struct SaveFilePrivateFromBufferRequest {
   /// ArrayBuffer data to save
   pub data: Vec<u8>,
   pub file_name: String,
@@ -45,7 +45,7 @@ pub struct SaveFilePrivateFromPathRequest {
 
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct SaveFilePublicFromPathRequest {
+pub struct SaveFilePublicFromBufferRequest {
   /// ArrayBuffer data to save
   pub data: Vec<u8>,
   pub file_name: String,

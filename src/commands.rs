@@ -29,17 +29,17 @@ pub(crate) async fn download_public<R: Runtime>(
 }
 
 #[command]
-pub(crate) async fn save_file_private_from_path<R: Runtime>(
+pub(crate) async fn save_file_private_from_buffer<R: Runtime>(
     app: AppHandle<R>,
-    payload: SaveFilePrivateFromPathRequest,
+    payload: SaveFilePrivateFromBufferRequest,
 ) -> Result<DownloadResponse> {
-    app.pldownloader().save_file_private_from_path(payload)
+    app.pldownloader().save_file_private_from_buffer(payload)
 }
 
 #[command]
-pub(crate) async fn save_file_public_from_path<R: Runtime>(
+pub(crate) async fn save_file_public_from_buffer<R: Runtime>(
     app: AppHandle<R>,
-    payload: SaveFilePublicFromPathRequest,
+    payload: SaveFilePublicFromBufferRequest,
 ) -> Result<DownloadResponse> {
-    app.pldownloader().save_file_public_from_path(payload)
+    app.pldownloader().save_file_public_from_buffer(payload)
 }

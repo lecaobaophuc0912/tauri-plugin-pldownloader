@@ -48,13 +48,13 @@ class DownloaderPlugin(private val activity: Activity): Plugin(activity) {
     }
 
     @InvokeArg
-    class SaveFilePrivateFromPathArgs {
+    class SaveFilePrivateFromBufferArgs {
         var data: ByteArray? = null
         var fileName: String? = null
     }
 
     @InvokeArg
-    class SaveFilePublicFromPathArgs {
+    class SaveFilePublicFromBufferArgs {
         var data: ByteArray? = null
         var fileName: String? = null
         var mimeType: String? = null
@@ -196,8 +196,8 @@ class DownloaderPlugin(private val activity: Activity): Plugin(activity) {
     }
 
     @Command
-    fun saveFilePrivateFromPath(invoke: Invoke) {
-        val args = invoke.parseArgs(SaveFilePrivateFromPathArgs::class.java)
+    fun saveFilePrivateFromBuffer(invoke: Invoke) {
+        val args = invoke.parseArgs(SaveFilePrivateFromBufferArgs::class.java)
         val data = args.data
         val fileName = args.fileName
         if (data == null || fileName.isNullOrBlank()) {
@@ -224,15 +224,15 @@ class DownloaderPlugin(private val activity: Activity): Plugin(activity) {
                 ret.put("path", dest.absolutePath)
                 activity.runOnUiThread { invoke.resolve(ret) }
             } catch (e: Exception) {
-                Log.e("DownloaderPlugin", "saveFilePrivateFromPath failed", e)
+                Log.e("DownloaderPlugin", "saveFilePrivateFromBuffer failed", e)
                 activity.runOnUiThread { invoke.reject(e.message ?: "save failed") }
             }
         }.start()
     }
 
     @Command
-    fun saveFilePublicFromPath(invoke: Invoke) {
-        val args = invoke.parseArgs(SaveFilePublicFromPathArgs::class.java)
+    fun saveFilePublicFromBuffer(invoke: Invoke) {
+        val args = invoke.parseArgs(SaveFilePublicFromBufferArgs::class.java)
         val data = args.data
         val fileName = args.fileName
         val mime = args.mimeType ?: "application/octet-stream"
@@ -277,7 +277,7 @@ class DownloaderPlugin(private val activity: Activity): Plugin(activity) {
                 ret.put("uri", uri.toString())
                 activity.runOnUiThread { invoke.resolve(ret) }
             } catch (e: Exception) {
-                Log.e("DownloaderPlugin", "saveFilePublicFromPath failed", e)
+                Log.e("DownloaderPlugin", "saveFilePublicFromBuffer failed", e)
                 try { resolver.delete(uri, null, null) } catch (_: Exception) {}
                 activity.runOnUiThread { invoke.reject(e.message ?: "save failed") }
             }
