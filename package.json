@@ -1,6 +1,6 @@
 {
   "name": "tauri-plugin-pldownloader-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "Phuc Le <lecaobaophuc@gmail.com>",
   "description": "TypeScript client for the Tauri PLDownloader plugin (Android/iOS).",
   "type": "module",

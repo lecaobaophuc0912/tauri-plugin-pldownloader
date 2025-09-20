@@ -1,6 +1,6 @@
 [package]
 name = "tauri-plugin-pldownloader"
-version = "1.0.0"
+version = "1.0.1"
 authors = [ "Phuc Le <lecaobaophuc@gmail.com>" ]
 description = "Tauri plugin for cross-platform file downloading (Android/iOS) with public/private destinations and a TypeScript client."
 edition = "2021"
