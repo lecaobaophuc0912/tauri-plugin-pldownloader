@@ -56,7 +56,6 @@ Or call commands directly using `@tauri-apps/api` `invoke` (see API section).
 
 ### Rust Setup
 
-
 In your app `src-tauri/src/lib.rs`:
 
 ```rust
@@ -76,6 +75,8 @@ If you use helpers from `tauri-plugin-pldownloader-api`:
 import {
   downloadPrivate,
   downloadPublic,
+  saveFilePrivateFromBuffer,
+  saveFilePublicFromBuffer,
   ping,
   copyFilePath,
 } from "tauri-plugin-pldownloader-api";
@@ -101,6 +102,26 @@ const r2 = await downloadPublic({
 // r2 media => { fileName: 'cat.jpg', uri: 'XXXXXXXX-XXXX...' }
 // r2 non-media => { fileName: 'report.xlsx', path: '/var/mobile/.../Documents/<AppName>/report.xlsx' }
 
+// Save from ArrayBuffer (for large files, avoids base64 overhead)
+const response = await fetch("https://example.com/large-file.zip");
+const blob = await response.blob();
+const arrayBuffer = await blob.arrayBuffer();
+
+// Save privately from buffer
+const r3 = await saveFilePrivateFromBuffer({
+  data: arrayBuffer,
+  fileName: "large-file.zip",
+});
+// r3 => { fileName: 'large-file.zip', path: '/var/mobile/.../Application Support/Downloads/large-file.zip' }
+
+// Save publicly from buffer
+const r4 = await saveFilePublicFromBuffer({
+  data: arrayBuffer,
+  fileName: "large-file.zip",
+  mimeType: "application/zip", // optional
+});
+// r4 => { fileName: 'large-file.zip', path: '/var/mobile/.../Documents/<AppName>/large-file.zip' }
+
 // Copy file from A to B (desktop/mobile)
 const destPath = await copyFilePath(
   "/path/src/file.pdf",
@@ -119,6 +140,12 @@ await invoke("plugin:pldownloader|download_public", {
 await invoke("plugin:pldownloader|download_private", {
   payload: { url, fileName },
 });
+await invoke("plugin:pldownloader|save_file_public_from_buffer", {
+  payload: { data: arrayBuffer, fileName, mimeType },
+});
+await invoke("plugin:pldownloader|save_file_private_from_buffer", {
+  payload: { data: arrayBuffer, fileName },
+});
 ```
 
 ## API Reference
@@ -134,6 +161,17 @@ export interface DownloadPrivateRequest {
 export interface DownloadPublicRequest {
   url: string;
   fileName?: string;
+  mimeType?: string;
+}
+
+export interface SaveFilePrivateFromBufferRequest {
+  data: ArrayBuffer;
+  fileName: string;
+}
+
+export interface SaveFilePublicFromBufferRequest {
+  data: ArrayBuffer;
+  fileName: string;
   mimeType?: string;
 }
 
@@ -165,14 +203,31 @@ export interface DownloadResponse {
     - Saves to MediaStore (Downloads/<AppName>) with mime-type, returns `uri`.
   - Use cases: download files intended for user visibility and management (Photos/Files/Downloads).
 
+- `saveFilePrivateFromBuffer(payload: SaveFilePrivateFromBufferRequest): Promise<DownloadResponse>`
+
+  - iOS: saves ArrayBuffer data to `Application Support/Downloads` (sandbox, not visible in Files/Photos). Returns `path`.
+  - Android: saves ArrayBuffer data to app private external directory (Downloads or files dir). Returns `path`.
+  - Use cases: save large files from memory without base64 overhead, store files temporarily for share sheet or internal opening.
+
+- `saveFilePublicFromBuffer(payload: SaveFilePublicFromBufferRequest): Promise<DownloadResponse>`
+
+  - iOS:
+    - Media (image/video): saves ArrayBuffer data to Photos via `PHPhotoLibrary`, returns `uri` (localIdentifier).
+    - Non-media (pdf, docx, xlsx, zip...): saves ArrayBuffer data to `Documents/<AppName>/`, visible in Files (On My iPhone), returns `path`.
+  - Android:
+    - Saves ArrayBuffer data to MediaStore (Downloads/<AppName>) with mime-type, returns `uri`.
+  - Use cases: save large files from memory without base64 overhead, save files intended for user visibility and management (Photos/Files/Downloads).
+
 - `copyFilePath(src: string, dest: string): Promise<string>`
   - Utility to copy files between known paths (e.g., from sandbox to Documents).
 
 ## Use Cases
 
-- Save snapshots/exported images: use `downloadPublic` with an image `mimeType` to save directly to Photos.
+- Save snapshots/exported images: use `downloadPublic` or `saveFilePublicFromBuffer` with an image `mimeType` to save directly to Photos.
 - Download documents (PDF, DOCX, XLSX) for users: `downloadPublic` (non-media) → appears in Files.
-- Store internal files to share/open later: `downloadPrivate` then use the returned `path` for the share sheet.
+- Store internal files to share/open later: `downloadPrivate` or `saveFilePrivateFromBuffer` then use the returned `path` for the share sheet.
+- Save large files from memory: use `saveFilePublicFromBuffer` or `saveFilePrivateFromBuffer` to avoid base64 encoding overhead when saving ArrayBuffer data.
+- Process files in memory: convert Blob to ArrayBuffer, process the data, then save directly without temporary files.
 
 ## iOS – Info.plist Notes (Required/Recommended)
 
