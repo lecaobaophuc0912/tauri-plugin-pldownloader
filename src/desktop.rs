@@ -29,48 +29,27 @@ impl<R: Runtime> Pldownloader<R> {
   }
 
   pub fn save_file_private_from_buffer(&self, payload: SaveFilePrivateFromBufferRequest) -> crate::Result<DownloadResponse> {
-    use std::path::Path;
-    use tauri::api::path::app_data_dir;
-    
-    // Get the app data directory for private files
-    let app_data = app_data_dir(&self.0.config().tauri.bundle.identifier)
-      .ok_or_else(|| std::io::Error::new(std::io::ErrorKind::NotFound, "App data directory not found"))?;
-    
-    // Create the private directory if it doesn't exist
-    let private_dir = app_data.join("private");
-    std::fs::create_dir_all(&private_dir)?;
-    
-    // Create the file path
-    let file_path = private_dir.join(&payload.file_name);
-    
-    // Write the data to the file
-    std::fs::write(&file_path, &payload.data)?;
-    
+    // Mock implementation for desktop - return fake data
+    let file_name = payload.file_name.clone();
     Ok(DownloadResponse {
       file_name: payload.file_name,
-      path: Some(file_path.to_string_lossy().to_string()),
+      path: Some(format!("/mock/private/{}", file_name)),
       uri: None,
     })
   }
 
   pub fn save_file_public_from_buffer(&self, payload: SaveFilePublicFromBufferRequest) -> crate::Result<DownloadResponse> {
-    use std::path::Path;
-    use tauri::api::path::download_dir;
-    
-    // Get the downloads directory for public files
-    let downloads_dir = download_dir()
-      .ok_or_else(|| std::io::Error::new(std::io::ErrorKind::NotFound, "Downloads directory not found"))?;
-    
-    // Create the file path
-    let file_path = downloads_dir.join(&payload.file_name);
-    
-    // Write the data to the file
-    std::fs::write(&file_path, &payload.data)?;
-    
+    // Mock implementation for desktop - return fake data
+    let file_name = payload.file_name.clone();
     Ok(DownloadResponse {
       file_name: payload.file_name,
-      path: Some(file_path.to_string_lossy().to_string()),
+      path: Some(format!("/mock/public/{}", file_name)),
       uri: None,
     })
+  }
+
+  pub fn copy_file_path(&self, _src: String, dest: String) -> crate::Result<String> {
+    // Mock implementation for desktop - return fake data
+    Ok(dest)
   }
 }
