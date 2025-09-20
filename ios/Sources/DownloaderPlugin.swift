@@ -27,6 +27,52 @@ class DownloaderPlugin: Plugin {
     let mimeType: String?
   }
 
+  class SaveFilePrivateFromPathArgs: Decodable {
+    let data: Data
+    let fileName: String
+    
+    private enum CodingKeys: String, CodingKey {
+      case data, fileName
+    }
+    
+    required init(from decoder: Decoder) throws {
+      let container = try decoder.container(keyedBy: CodingKeys.self)
+      fileName = try container.decode(String.self, forKey: .fileName)
+      
+      // Handle ArrayBuffer as array of UInt8
+      if let dataArray = try? container.decode([UInt8].self, forKey: .data) {
+        data = Data(dataArray)
+      } else {
+        // Fallback to direct Data decoding
+        data = try container.decode(Data.self, forKey: .data)
+      }
+    }
+  }
+
+  class SaveFilePublicFromPathArgs: Decodable {
+    let data: Data
+    let fileName: String
+    let mimeType: String?
+    
+    private enum CodingKeys: String, CodingKey {
+      case data, fileName, mimeType
+    }
+    
+    required init(from decoder: Decoder) throws {
+      let container = try decoder.container(keyedBy: CodingKeys.self)
+      fileName = try container.decode(String.self, forKey: .fileName)
+      mimeType = try container.decodeIfPresent(String.self, forKey: .mimeType)
+      
+      // Handle ArrayBuffer as array of UInt8
+      if let dataArray = try? container.decode([UInt8].self, forKey: .data) {
+        data = Data(dataArray)
+      } else {
+        // Fallback to direct Data decoding
+        data = try container.decode(Data.self, forKey: .data)
+      }
+    }
+  }
+
   // MARK: - Public Commands
   @objc public func downloadPrivate(_ invoke: Invoke) throws {
     let args = try invoke.parseArgs(DownloadPrivateArgs.self)
@@ -120,6 +166,69 @@ class DownloaderPlugin: Plugin {
         }
       }
     }.resume()
+  }
+
+  @objc public func saveFilePrivateFromPath(_ invoke: Invoke) throws {
+    let args = try invoke.parseArgs(SaveFilePrivateFromPathArgs.self)
+
+    let data = args.data
+    let fileName = args.fileName
+
+    do {
+      let directory = try self.ensureApplicationSupportSubdir("Downloads")
+      let destinationUrl = self.uniqueDestination(for: directory, preferredFileName: fileName)
+      try data.write(to: destinationUrl)
+
+      invoke.resolve([
+        "fileName": destinationUrl.lastPathComponent,
+        "path": destinationUrl.path
+      ])
+    } catch {
+      invoke.reject(error.localizedDescription)
+    }
+  }
+
+  @objc public func saveFilePublicFromPath(_ invoke: Invoke) throws {
+    let args = try invoke.parseArgs(SaveFilePublicFromPathArgs.self)
+
+    let data = args.data
+    let fileName = args.fileName
+    let isMedia = self.isImageOrVideo(mimeType: args.mimeType, fileName: fileName)
+
+    if isMedia {
+      do {
+        let cacheDir = try self.ensureCachesSubdir("Downloads")
+        let persistentUrl = self.uniqueDestination(for: cacheDir, preferredFileName: fileName)
+        try data.write(to: persistentUrl)
+
+        self.saveToPhotoLibrary(fromPersistentUrl: persistentUrl, fileName: fileName) { result in
+          try? FileManager.default.removeItem(at: persistentUrl)
+          switch result {
+          case .success(let localIdentifier):
+            invoke.resolve([
+              "fileName": fileName,
+              "uri": localIdentifier
+            ])
+          case .failure(let err):
+            invoke.reject(err.localizedDescription)
+          }
+        }
+      } catch {
+        invoke.reject(error.localizedDescription)
+      }
+    } else {
+      do {
+        let documentsDir = try self.ensureDocumentsSubdir(self.appDisplayName())
+        let destinationUrl = self.uniqueDestination(for: documentsDir, preferredFileName: fileName)
+        try data.write(to: destinationUrl)
+        invoke.resolve([
+          "fileName": destinationUrl.lastPathComponent,
+          "path": destinationUrl.path
+        ])
+      } catch {
+        invoke.reject(error.localizedDescription)
+      }
+    }
   }
 
   // MARK: - Helpers

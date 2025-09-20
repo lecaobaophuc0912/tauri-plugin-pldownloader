@@ -1,4 +1,4 @@
-const COMMANDS: &[&str] = &["ping"];
+const COMMANDS: &[&str] = &["ping", "download_private", "download_public", "save_file_private_from_path", "save_file_public_from_path"];
 
 fn main() {
   tauri_plugin::Builder::new(COMMANDS)

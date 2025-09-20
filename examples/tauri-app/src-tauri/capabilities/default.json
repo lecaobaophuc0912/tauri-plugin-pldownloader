@@ -11,6 +11,9 @@
     "pldownloader:allow-download-private",
     "pldownloader:allow-download-public",
     "pldownloader:allow-copy-file-path",
+    "pldownloader:allow-save-file-private-from-path",
+    "pldownloader:allow-save-file-public-from-path",
+    "fs:allow-write-file",
     "share:default",
     "share:allow-share-file"
   ]

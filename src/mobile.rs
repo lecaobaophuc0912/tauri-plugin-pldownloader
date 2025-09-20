@@ -45,4 +45,18 @@ impl<R: Runtime> Pldownloader<R> {
       .run_mobile_plugin("downloadPublic", payload)
       .map_err(Into::into)
   }
+
+  pub fn save_file_private_from_path(&self, payload: SaveFilePrivateFromPathRequest) -> crate::Result<DownloadResponse> {
+    self
+      .0
+      .run_mobile_plugin("saveFilePrivateFromPath", payload)
+      .map_err(Into::into)
+  }
+
+  pub fn save_file_public_from_path(&self, payload: SaveFilePublicFromPathRequest) -> crate::Result<DownloadResponse> {
+    self
+      .0
+      .run_mobile_plugin("saveFilePublicFromPath", payload)
+      .map_err(Into::into)
+  }
 }
